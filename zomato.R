@@ -2,6 +2,7 @@
 
 rm(list = ls())
 
+library(stringr)
 library(RCurl)
 library(curl)
 library(jsonlite)
@@ -207,27 +208,34 @@ search <- function(entity_id = NULL,
 }
 ##############################################################################
 
+clean_data <- function(x){
+  x <- tolower(x)
+  x <- str_replace_all(x,'\n',' ')
+  x <- str_replace_all(x,'&nbsp',' ')
+  x <- str_replace_all(x,',',' ')
+  x <- str_replace_all(x,';',' ')
+  x <- str_replace_all(x,'[0-9]',' ')
+  x <- str_replace_all(x,'$',' ')
+  #gsub('[.]','',x)
+  x
+}
+
 data    <- reviews(resturant_id = 16774318)
 
-rating <- 0
+rating <- 1
 a<-c()
 for(i in 1:length(data$user_reviews)){
   if(data$user_reviews[[i]]$review$rating >= rating){
-    a <- append(a,data$user_reviews[[i]]$review$review_text)
+    a <- append(a,clean_data(data$user_reviews[[i]]$review$review_text))
   }
 }
 
 corp <- Corpus(VectorSource(a))
-dtm <- DocumentTermMatrix(corp)
-lords <- corp
+corp <- tm_map(corp, stripWhitespace)
+#dtm <- DocumentTermMatrix(corp)
+corp <- tm_map(corp, removeWords, stopwords("english"))
 
-lords <- tm_map(lords, stripWhitespace)
-lords <- tm_map(lords, tolower)
-lords <- tm_map(lords, removeWords, stopwords("english"))
-lords <- tm_map(lords, stemDocument)
-
-wordcloud(corp, scale=c(5,0.5), max.words=100, random.order=FALSE, rot.per=0.35, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
-
+wordcloud(corp, colors=brewer.pal(8, "Dark2"))
 
 
 
