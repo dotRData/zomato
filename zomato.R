@@ -9,19 +9,92 @@ library(wordcloud)
 
 key     <<- '07b65c0fd9ac93e8c6bb905f468eaa14'
 header  <<- c(Accept="application/json", 'user_key' = key)
-res_id  <<- 16774318
+# res_id  <<- 16774318
 
 ########################## COMMON ##########################
 
 ##### CITIES #####
-
+cities <- function(city_name = NULL, 
+                   lat = NULL,
+                   lon = NULL,
+                   city_ids = NULL,
+                   count = 10){
+ 
+  if(is.null(city_ids) == FALSE) city_ids <- paste(city_ids,collapse = ',')
+  
+  url <- paste('https://developers.zomato.com/api/v2.1/cities?q=', city_name,
+               '&lat=', lat, 
+               '&lon=', lon, 
+               '&city_ids=', city_ids,
+               '&count=', count, 
+               sep = "")
+  
+  data <- fromJSON(getURL(url, httpheader = header))
+  data
+}
+  
 ##### COLLECTIONS #####
-
+collections <- function(city_id, 
+                   lat = NULL,
+                   lon = NULL,
+                   count = 10){
+ 
+  if (missing(city_id)) stop("Need to specify city_id")
+  
+  url <- paste('https://developers.zomato.com/api/v2.1/collections?city_id=', city_id,
+               '&lat=', lat, 
+               '&lon=', lon,
+               '&count=', count, 
+               sep = "")
+  
+  data <- fromJSON(getURL(url, httpheader = header))
+  data
+}
 ##### CUISINES #####
-
+cuisines <- function(city_id, 
+                     lat = NULL,
+                     lon = NULL){
+  
+  if (missing(city_id)) stop("Need to specify city_id")
+  
+  url <- paste('https://developers.zomato.com/api/v2.1/cuisines?city_id=', city_id,
+               '&lat=', lat, 
+               '&lon=', lon, 
+               sep = "")
+  
+  data <- fromJSON(getURL(url, httpheader = header))
+  data
+}
 ##### ESTABLISHMENTS #####
+establishments <- function(city_id, 
+                     lat = NULL,
+                     lon = NULL){
+  
+  if (missing(city_id)) stop("Need to specify city_id")
+  
+  url <- paste('https://developers.zomato.com/api/v2.1/establishments?city_id=', city_id,
+               '&lat=', lat, 
+               '&lon=', lon, 
+               sep = "")
+  
+  data <- fromJSON(getURL(url, httpheader = header))
+  data
+}
 
 ##### GEOCODE #####
+geocode <- function(lat,
+                    lon){
+  
+  if (missing(lat)) stop("Need to specify lat")
+  if (missing(lon)) stop("Need to specify lon")
+  
+  url <- paste('https://developers.zomato.com/api/v2.1/geocode?lat=', lat, 
+               '&lon=', lon, 
+               sep = "")
+  
+  data <- fromJSON(getURL(url, httpheader = header))
+  data
+}
 
 
 ########################## LOCATION ##########################
