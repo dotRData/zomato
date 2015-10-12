@@ -1,5 +1,7 @@
 # https://developers.zomato.com/documentation
 
+rm(list = ls())
+
 library(RCurl)
 library(curl)
 library(jsonlite)
@@ -18,7 +20,7 @@ cities <- function(city_name = NULL,
                    lat = NULL,
                    lon = NULL,
                    city_ids = NULL,
-                   count = 10){
+                   count = 100){
  
   if(is.null(city_ids) == FALSE) city_ids <- paste(city_ids,collapse = ',')
   
@@ -39,7 +41,7 @@ cities <- function(city_name = NULL,
 collections <- function(city_id, 
                    lat = NULL,
                    lon = NULL,
-                   count = 10){
+                   count = 100){
  
   if (missing(city_id)) stop("Need to specify city_id")
   
@@ -105,7 +107,7 @@ geocode <- function(lat,
 location <- function(city_name, 
                      lat = NULL, 
                      lon = NULL, 
-                     count = NULL){
+                     count = 100){
   
   if (missing(city_name)) stop("Need to specify city_name")
   
@@ -151,8 +153,8 @@ resturant <- function(resturant_id){
 
 ##### REVIEWS #####
 reviews <- function(resturant_id, 
-                    start = 1,
-                    count = 10){
+                    start = 0,
+                    count = 20){
   
   if (missing(resturant_id)) stop("Need to specify resturant_id")
   
@@ -169,7 +171,7 @@ search <- function(entity_id = NULL,
                    entity_type = c('city', 'subzone', 'zone', 'landmark', 'metro', 'group'),
                    q = NULL, 
                    start = 1,
-                   count = 10,
+                   count = 100,
                    lat = NULL,
                    lon = NULL,
                    radius = NULL,
@@ -207,9 +209,24 @@ search <- function(entity_id = NULL,
 
 data    <- reviews(resturant_id = 16774318)
 
+rating <- 0
+a<-c()
 for(i in 1:length(data$user_reviews)){
-    print(data$user_reviews[[i]]$review$review_text)
+  if(data$user_reviews[[i]]$review$rating >= rating){
+    a <- append(a,data$user_reviews[[i]]$review$review_text)
+  }
 }
+
+corp <- Corpus(VectorSource(a))
+dtm <- DocumentTermMatrix(corp)
+lords <- corp
+
+lords <- tm_map(lords, stripWhitespace)
+lords <- tm_map(lords, tolower)
+lords <- tm_map(lords, removeWords, stopwords("english"))
+lords <- tm_map(lords, stemDocument)
+
+wordcloud(corp, scale=c(5,0.5), max.words=100, random.order=FALSE, rot.per=0.35, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
 
 
 
