@@ -22,6 +22,8 @@ cities <- function(city_name = NULL,
  
   if(is.null(city_ids) == FALSE) city_ids <- paste(city_ids,collapse = ',')
   
+  if(length(unlist(strsplit(city_name, ' '))) > 1) city_name <- paste(unlist(strsplit(city_name, ' ')), collapse = '%20')
+  
   url <- paste('https://developers.zomato.com/api/v2.1/cities?q=', city_name,
                '&lat=', lat, 
                '&lon=', lon, 
@@ -106,6 +108,8 @@ location <- function(city_name,
                      count = NULL){
   
   if (missing(city_name)) stop("Need to specify city_name")
+  
+  if(length(unlist(strsplit(city_name, ' '))) > 1) city_name <- paste(unlist(strsplit(city_name, ' ')), collapse = '%20')
   
   url <- paste('https://developers.zomato.com/api/v2.1/locations?query=', city_name,
                '&lat=', lat, 
