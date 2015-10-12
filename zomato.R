@@ -179,6 +179,8 @@ search <- function(entity_id = NULL,
   if (missing(sort)) stop("Need to specify sort in ('cost', 'rating', 'real_distance')")
   if (missing(order)) stop("Need to specify order in ('asc', 'desc')")
   
+  if(length(unlist(strsplit(q, ' '))) > 1) q <- paste(unlist(strsplit(q, ' ')), collapse = '%20')
+  
   url <- paste('https://developers.zomato.com/api/v2.1/search?entity_id=', entity_id, 
                '&entity_type=', entity_type,
                '&q=', q,
