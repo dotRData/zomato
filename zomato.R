@@ -12,7 +12,7 @@ clean_corpus <- function(x){
   corp
 }
 
-word_cloud <- function(data, rating, min.freq = 2, max.words=30){
+word_cloud <- function(data, rating = 0, min.freq = 2, max.words = 30){
   rev_data <- c()
   
   for(i in 1:length(data$user_reviews)){
@@ -20,11 +20,12 @@ word_cloud <- function(data, rating, min.freq = 2, max.words=30){
       rev_data <- append(rev_data,str_replace_all(tolower(data$user_reviews[[i]]$review$review_text),"\n", ' '))
     }
   }
+
   print(rev_data)
-  corp <- clean_corpus(rev_data)
-  wordcloud(corp, scale=c(4,0.5), min.freq = 2, max.words=30,colors=brewer.pal(8, "Dark2"))
+  corpus <- clean_corpus(rev_data)
+  wordcloud(corpus, scale=c(4,0.5), min.freq = min.freq, max.words = max.words, colors=brewer.pal(8, "Dark2"))
 }
 
-data <- reviews(resturant_id = 16774318)
-word_cloud(data, 1)
+reviews_data <- reviews(resturant_id = 16774318)
+word_cloud(reviews_data)
 
